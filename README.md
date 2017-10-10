@@ -34,4 +34,15 @@ Enter initial value in hex:
 1234567   
 Would you like to ENCODE or DECODE? (E/D)   
 D   
-�`+*�l���|̂A�I�q�   
+�`+*�l���|̂A�I�q�
+
+### SAMPLE USING SAME DATA BUT WITH PARTIALLY ALTERED INPUT DATA
+Enter data:    
+ACC6C5E955FB26045BBF27BF223EA44A2D926DBBD679088400F629CD1C829BB51111111111   
+Enter data length:    
+37   
+Enter initial value in hex:     
+fead4801   
+Would you like to ENCODE or DECODE? (E/D)   
+d   
+OUTPUT DECODED: Hello world, how are you doing t�T,w�    
