@@ -7,6 +7,15 @@ import java.util.Scanner;
 // author: Nathan Merris
 public class Main {
 
+    /**
+     *  This program asks the user to enter a String of data to encode or decode.
+     *  The user must enter the exact length of the encoded data.
+     *  So if user is entering data to encode, data length will equal the number of chars entered.
+     *  If user is entering data to decode, they must know how many chars decoded output will be,
+     *  which in the case of this simple program, will always be exactly half the number of entered encoded hex digits.
+     *
+     *  The program automatically detects if it should encode or decode.
+     */
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
@@ -15,6 +24,7 @@ public class Main {
         System.out.println("Enter data: ");
         String dataString = scanner.nextLine();
 
+        // get data length
         System.out.println("Enter data length: ");
         int dataLength = scanner.nextInt();
         scanner.nextLine(); // consume the dangling \n
@@ -25,16 +35,27 @@ public class Main {
 
         try {
             // convert initialValueString to an int, user can enter an unsigned int here
-            // so there are 2^32 = 0x99999999 possible initialValues, and must be a positive number
+            // so there are 2^32 - 1 = 0x99999999 possible initialValues, and must be a positive number
             int initialValue = Integer.parseUnsignedInt(initialValueString, 16);
+
+            // all good on the initialValue at this point, so call BBS method
             blumBlumShubify(dataString , dataLength, initialValue);
         } catch (NumberFormatException e) {
-            System.out.println("Invalid initial value");
+            System.out.println("Invalid initial value, or incorrect number entered for data length");
         }
 
     } // main
 
 
+    /**
+     * Displays encoded or decoded String to the console.  This method will automatically detect if it should be
+     * encoding or decoding.  A very simple check is done to decide to encode or decode: if the number the user enters
+     * for dataLength equals the number of chars in the input String, it will encode.  If not, it will decode.
+     *
+     * @param dataString the data to encode or decode
+     * @param dataLength the number of chars being entered to encode, or the number of chars that will result after decoding
+     * @param initialValue any positive number less than 2^32 - 1 = 0x99999999
+     */
     private static void blumBlumShubify(String dataString, int dataLength, int initialValue) {
 
         // squaring the initialValue for BBS PRNG can result in very large numbers
@@ -45,6 +66,15 @@ public class Main {
         // used to select the lowest byte of a number
         final BigInteger lowestByteMask = BigInteger.valueOf(0xFFL);
 
+        // holds the encoded output String
+        StringBuilder encodedOutputString = new StringBuilder(dataLength);
+
+        // holds the decoded output bytes, these will be converted to a String when displaying to console
+        byte[] decodedOutputByteArray = new byte[dataLength];
+
+        // calculate the initial value: value = (value * value) mod M
+        BigInteger value = BigInteger.valueOf(initialValue).pow(2).mod(M);
+
         // if the number of chars entered as data is same as data length entered by user, must be encoding
         // otherwise, for the purposes of this simple program, we'll assume user wants to decode
         boolean encode = dataLength == dataString.length();
@@ -52,6 +82,9 @@ public class Main {
         // holds each byte of the input: could be either data to encode or decode
         byte[] data = new byte[dataLength];
 
+
+
+        // populate the data byte array
         if (encode) {
             // this challenge assumes 1 byte per character, so I'm chopping off the unused first byte
             // this happens automatically when converting data to an array of Bytes
@@ -68,20 +101,6 @@ public class Main {
                 data[i / 2] = (byte) (tempByte);
             }
         }
-        
-        
-        
-        
-        
-
-        // holds the encoded output String
-        StringBuilder encodedOutputString = new StringBuilder(dataLength);
-
-        // holds the decoded output bytes, these will be converted to a String when displaying to console
-        byte[] decodedOutputByteArray = new byte[dataLength];
-
-        // calculate the initial value: value = (value * value) mod M
-        BigInteger value = BigInteger.valueOf(initialValue).pow(2).mod(M);
 
         // get the lowest byte: mask out everything except the lowest byte, convert to byte array,
         // then grab the lowest byte of the array
@@ -125,14 +144,6 @@ public class Main {
             }
         }
 
-
-
-
     } // blumBlumShubify
-
-
-
-
-
 
 }
