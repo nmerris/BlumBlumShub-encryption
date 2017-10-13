@@ -5,7 +5,7 @@ import java.math.BigInteger;
 import java.util.Scanner;
 
 // author: Nathan Merris
-public class Main {
+public class BlumBlumShub {
 
     /**
      *  This program asks the user to enter a String of data to encode or decode.
